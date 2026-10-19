@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Desafío Técnico Data Scientist Lead · Optimización Logística</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Identidad aproximada: rojo Coca-Cola #F40009, negro, blanco y grises. Tipografía libre (Inter) en reemplazo de TCCC Unity. */
+  :root {
+    --rojo: #F40009; --rojo-osc: #B30007; --negro: #1E1E1E; --gris: #5A5A5A; --gris-claro: #F3F3F3;
+    --borde: #E2E2E2; --blanco: #FFFFFF;
+  }
+  @page { size: 1920px 1080px; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #DADADA; }
+  body { font-family: 'Inter', Arial, sans-serif; color: var(--negro); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide { width: 1920px; height: 1080px; position: relative; overflow: hidden; background: var(--blanco);
+           padding: 150px 128px 150px; display: flex; flex-direction: column; gap: 32px; page-break-after: always; break-after: page; }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  .brandbar { position: absolute; left: 0; top: 0; width: 1920px; height: 14px; background: var(--rojo); }
+  .eyebrow { position: absolute; left: 128px; top: 62px; font-size: 22px; font-weight: 700; letter-spacing: 2px;
+             text-transform: uppercase; color: var(--rojo); }
+  h1 { font-size: 64px; font-weight: 800; line-height: 1.08; letter-spacing: -1px; }
+  h2 { font-size: 54px; font-weight: 800; line-height: 1.1; letter-spacing: -0.5px; color: var(--negro); }
+  h3 { font-size: 28px; font-weight: 700; color: var(--negro); }
+  p, li, td, th { font-size: 24px; line-height: 1.38; color: var(--gris); }
+  .lead { font-size: 28px; color: var(--gris); }
+  .row { display: flex; gap: 28px; }
+  .col { display: flex; flex-direction: column; gap: 20px; }
+  .card { background: var(--gris-claro); border-radius: 14px; padding: 26px 30px; display: flex; flex-direction: column; gap: 10px; }
+  .card.accent { border-left: 8px solid var(--rojo); }
+  .card.dark { background: var(--negro); }
+  .card.dark h3, .card.dark p { color: var(--blanco); }
+  .big { font-size: 76px; font-weight: 800; line-height: 1.05; color: var(--rojo); letter-spacing: -1px; }
+  .fig { background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; object-fit: contain; }
+  .footer { position: absolute; left: 128px; right: 128px; bottom: 52px; display: flex; justify-content: space-between;
+            align-items: center; border-top: 1px solid var(--borde); padding-top: 18px; }
+  .footer span { font-size: 20px; color: #8A8A8A; }
+  .footer .num { font-weight: 800; color: var(--rojo); }
+  table { border-collapse: collapse; width: 100%; }
+  th { text-align: left; font-weight: 700; color: var(--negro); border-bottom: 3px solid var(--rojo); padding: 10px 14px; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--borde); color: var(--negro); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pos { color: var(--rojo); font-weight: 700; }
+  .neg { color: var(--negro); font-weight: 700; }
+  .tag { display: inline-block; font-size: 20px; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+  .tag.sub { background: #FDE0E1; color: var(--rojo-osc); }
+  .tag.sobre { background: #E6E6E6; color: var(--negro); }
+  /* Portada / diagnóstico: banda roja */
+  .hero { position: absolute; left: 0; top: 0; width: 1920px; height: 400px; background: var(--rojo); }
+  .s1 { padding-top: 96px; }
+  .s1 .eyebrow { color: var(--blanco); opacity: 0.9; top: 52px; }
+  .s1 h1, .s1 .lead { color: var(--blanco); position: relative; }
+  .s1 .lead { opacity: 0.95; }
+  .s1 .fig { position: relative; margin-top: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
+  /* Cierre: fondo rojo */
+  .s9 { background: var(--rojo); }
+  .s9 .brandbar { background: var(--negro); }
+  .s9 .eyebrow, .s9 h2 { color: var(--blanco); }
+  .s9 .card { background: var(--blanco); }
+  .s9 .card p { color: var(--negro); }
+  .s9 table th { color: var(--blanco); border-bottom: 3px solid var(--blanco); }
+  .s9 table td { color: var(--blanco); border-bottom: 1px solid rgba(255,255,255,0.35); }
+  .s9 .footer { border-top: 1px solid rgba(255,255,255,0.4); }
+  .s9 .footer span, .s9 .footer .num { color: var(--blanco); }
+</style>
+</head>
+<body>
+
+<!-- 1 · Diagnóstico -->
+<section class="slide s1">
+  <div class="hero"></div>
+  <p class="eyebrow">Desafío técnico · Data Scientist Lead · Optimización logística</p>
+  <h1>El pronóstico base erra un 20.8% (WAPE), y el error es un sesgo sistemático de cada CD</h1>
+  <p class="lead">6 CD × 60 días · 1,380 pronósticos D+1…D+4. El bias global (+6.5%) engaña: sesgos de signo opuesto se compensan.</p>
+  <img class="fig" src="figuras/t1_bias_wape.png" alt="Bias del pronóstico base por CD y WAPE por horizonte" style="width:1620px;height:512px">
+  <div class="footer"><span>Tarea 1 · Diagnóstico del error · Cristian Carcamo</span><span class="num">1 / 9</span></div>
+</section>
+
+<!-- 2 · Hallazgos -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <p class="eyebrow">Tarea 1 · Hallazgos por CD y horizonte</p>
+  <h2>Tres CD subestiman, tres sobreestiman; el horizonte pesa poco</h2>
+  <div class="row" style="flex:1">
+    <div class="col" style="flex:1.2">
+      <table>
+        <tr><th>CD</th><th class="num">Bias</th><th class="num">WAPE</th><th>Diagnóstico</th></tr>
+        <tr><td>SUR</td><td class="num pos">+31.6%</td><td class="num">31.6%</td><td><span class="tag sub">Subestima</span></td></tr>
+        <tr><td>ESTE</td><td class="num pos">+25.3%</td><td class="num">25.9%</td><td><span class="tag sub">Subestima</span></td></tr>
+        <tr><td>NORTE</td><td class="num pos">+7.5%</td><td class="num">9.8%</td><td><span class="tag sub">Subestima (leve)</span></td></tr>
+        <tr><td>CENTRO</td><td class="num neg">−20.2%</td><td class="num">23.3%</td><td><span class="tag sobre">Sobreestima</span></td></tr>
+        <tr><td>PACÍFICO</td><td class="num neg">−21.6%</td><td class="num">22.2%</td><td><span class="tag sobre">Sobreestima</span></td></tr>
+        <tr><td>OESTE</td><td class="num neg">−22.7%</td><td class="num">23.9%</td><td><span class="tag sobre">Sobreestima</span></td></tr>
+      </table>
+      <p>Bias &gt; 0 = subestimación. El signo se mantiene en el 100% de las semanas en los 6 CD.</p>
+    </div>
+    <div class="col" style="flex:1">
+      <div class="card accent">
+        <p>WAPE global D+1 → D+4</p>
+        <p class="big">19.8% → 22.5%</p>
+        <p>+2.8 pp; el salto principal ocurre en D+4. Incluso en D+1 el error es ~20%: el problema es el nivel, no la anticipación.</p>
+      </div>
+      <div class="card">
+        <h3>Degradación heterogénea</h3>
+        <p>CENTRO (+8 pp) y PACÍFICO (+6 pp) empeoran con el horizonte; en SUR y OESTE el error casi no cambia porque es sesgo puro.</p>
+      </div>
+      <div class="card">
+        <h3>NORTE: poco error, mucho costo</h3>
+        <p>Es el CD más preciso, pero tiene 6 de los 13 días-CD sobre capacidad.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>Tarea 1 · Diagnóstico del error · Cristian Carcamo</span><span class="num">2 / 9</span></div>
+</section>
+
+<!-- 3 · Plan de entrega -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <p class="eyebrow">Tarea 2 · Estado del plan de entrega</p>
+  <h2>El plan sesga volumen y fecha, y los desvíos vuelven al martes</h2>
+  <div class="row">
+    <div class="card accent" style="flex:1"><p class="big">+10.6%</p><p>bias de volumen: el plan subestima la compra real (real ≈ 1.12× plan) en los 6 CD y los 3 canales</p></div>
+    <div class="card accent" style="flex:1"><p class="big">17.5%</p><p>de las compras sale de fecha (129 de 739); los atrasos son 3.5× más frecuentes que los adelantos</p></div>
+    <div class="card dark" style="flex:1"><p class="big">60%</p><p>de las compras fuera de plan termina en martes (77 de 129): el pico se auto-refuerza</p></div>
+  </div>
+  <img class="fig" src="figuras/t2_fuera_de_plan.png" alt="Porcentaje de compras fuera de plan por CD y por día planificado" style="width:1320px;height:378px">
+  <div class="footer"><span>Tarea 2 · Métricas extra: adhesión por cliente, variación de fecha y volumen, concentración (top 20% de clientes = 68% de desvíos) · Cristian Carcamo</span><span class="num">3 / 9</span></div>
+</section>
+
+<!-- 4 · Aplanamiento -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <p class="eyebrow">Tarea 2 · Estrategia de aplanamiento</p>
+  <h2>Aplanar con slotting dinámico por utilización</h2>
+  <img class="fig" src="figuras/t2_aplanamiento.png" alt="Demanda media por día de semana y días-CD sobre capacidad por escenario" style="width:1400px;height:423px">
+  <div class="row">
+    <div class="card accent" style="flex:1"><h3>Mecanismo</h3><p>Al tomar el pedido: utilización proyectada por slot = pronóstico corregido / capacidad. Se recomienda la fecha con holgura (±2 días), con incentivo si el slot elegido supera 90%.</p></div>
+    <div class="card accent" style="flex:1"><h3>Simulación</h3><p>Dinámico: 13 → 0 días-CD sobre capacidad moviendo 1.6% del volumen. Mover un 30% fijo del martes crea 22. Piloto con los 59 clientes flexibles.</p></div>
+    <div class="card accent" style="flex:1"><h3>KPIs (A/B por cliente)</h3><p>Días-CD sobre capacidad, pico/promedio (hoy 1.24), CV diario, aceptación de la fecha recomendada. Guardarraíl: OTIF y volumen por cliente.</p></div>
+  </div>
+  <div class="footer"><span>Tarea 2 · Plan de entrega · Cristian Carcamo</span><span class="num">4 / 9</span></div>
+</section>
+
+<!-- 5 · Metodología -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <p class="eyebrow">Tarea 3 · Metodología del modelo complementario</p>
+  <h2>El modelo aprende la corrección del pronóstico base</h2>
+  <div class="row">
+    <div class="col" style="width:660px">
+      <div class="card accent"><h3>Qué predice</h3><p>log(real / base), con un Ridge por horizonte, global para los 6 CD y sin ID de CD: transferible a centros nuevos.</p></div>
+      <div class="card accent"><h3>Con qué (solo info hasta E−1)</h3><p>Día de semana, martes y día pico, índice estacional, medias móviles 7/14d, mismo día 4 semanas, sesgo móvil 14/28d; todo relativo al base, en log.</p></div>
+      <div class="card accent"><h3>Cómo se valida</h3><p>Backtest rolling-origin semanal (6 folds), re-entrenando en cada origen, mismas filas para todos los modelos y bootstrap por semanas.</p></div>
+    </div>
+    <div class="col" style="flex:1">
+      <img class="fig" src="figuras/t3_coeficientes.png" alt="Coeficientes del Ridge por horizonte" style="width:976px;height:398px">
+      <p style="font-size:28px;color:var(--negro);font-weight:600">A mayor horizonte, más peso a la historia propia: en D+1 manda el sesgo reciente; en D+4, el patrón del mismo día de semana.</p>
+      <p>Iteración documentada: v1 (features en niveles, modelo global) → v2 (log-relativas, por horizonte).</p>
+    </div>
+  </div>
+  <div class="footer"><span>Tarea 3 · Modelo de corrección · Cristian Carcamo</span><span class="num">5 / 9</span></div>
+</section>
+
+<!-- 6 · Resultados -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <p class="eyebrow">Tarea 3 · Resultados del backtest</p>
+  <h2>WAPE 20.7% → 6.6% en backtest: 68% menos error</h2>
+  <img class="fig" src="figuras/t3_resultados.png" alt="WAPE global por modelo y WAPE por horizonte" style="width:1500px;height:500px">
+  <div class="row">
+    <div class="card accent" style="flex:1"><h3>6/6 folds</h3><p>mejor que el base y que el fallback</p></div>
+    <div class="card accent" style="flex:1"><h3>Bias en ±2.5%</h3><p>en todos los CD (base: −22% a +31%)</p></div>
+    <div class="card accent" style="flex:1"><h3>−2.8 pp vs regla simple</h3><p>IC95% [−3.4, −2.2]; sobre todo en D+3/D+4</p></div>
+  </div>
+  <div class="footer"><span>Tarea 3 · Modelo de corrección · Cristian Carcamo</span><span class="num">6 / 9</span></div>
+</section>
+
+<!-- 7 · Gate -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <p class="eyebrow">Tarea 4 · Resiliencia: gate de historia mínima</p>
+  <h2>Gate de 45 días: activar el modelo solo con historia</h2>
+  <div class="row">
+    <div class="col" style="width:1000px">
+      <img class="fig" src="figuras/t4_sensibilidad_umbral.png" alt="WAPE según días de historia disponibles" style="width:1000px;height:470px">
+      <p>Simulación: todos los CD truncados a L días; media de 3 fechas de corte.</p>
+    </div>
+    <div class="col" style="flex:1">
+      <div class="card accent"><h3>Regla</h3><p>≥ 45 días continuos: modelo. Si no: sesgo móvil 14d o, sin historia, base. Nunca lanza excepción (probado con CD nuevo, huecos y datos corruptos).</p></div>
+      <div class="card accent"><h3>Evidencia</h3><p>Bajo 21 días el modelo es peor que el fallback. Mejora hasta 45d: 7.0% (28d) → 6.1% (45d), con menos varianza.</p></div>
+      <div class="card dark"><h3>Recomendación</h3><p>45 días por defecto, configurable por CD; entre 28 y 45 días, el modelo corre en shadow mode.</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>Tareas 4 y 5 · Resiliencia y plataforma · Cristian Carcamo</span><span class="num">7 / 9</span></div>
+</section>
+
+<!-- 8 · Arquitectura -->
+<section class="slide">
+  <div class="brandbar"></div>
+  <p class="eyebrow">Tarea 5 · Arquitectura e infraestructura en AWS</p>
+  <h2>Arquitectura AWS: batch, servicio y persistencia</h2>
+  <div class="row">
+    <img class="fig" src="../docs/arquitectura_aws.png" alt="Diagrama de arquitectura AWS en draw.io" style="width:1160px;height:665px">
+    <div class="col" style="flex:1">
+      <div class="card accent"><h3>Batch</h3><p>Step Functions orquesta gate, entrenamiento y backtest en SageMaker; solo promueve modelos que le ganan al campeón.</p></div>
+      <div class="card accent"><h3>Inferencia</h3><p>API Gateway + Lambda leen DynamoDB en milisegundos; el modelo no está en la ruta crítica.</p></div>
+      <div class="card accent"><h3>Persistencia</h3><p>S3 para datos, Aurora para métricas y decisiones del gate, CloudWatch para alarmas.</p></div>
+    </div>
+  </div>
+  <div class="footer"><span>Tareas 4 y 5 · Resiliencia y plataforma · Cristian Carcamo</span><span class="num">8 / 9</span></div>
+</section>
+
+<!-- 9 · Impacto -->
+<section class="slide s9">
+  <div class="brandbar"></div>
+  <p class="eyebrow">Impacto en negocio y KPIs</p>
+  <h2>Menos fletes de emergencia, flota mejor dimensionada</h2>
+  <div class="row">
+    <div class="card" style="flex:1"><p class="big" style="font-size:64px">−79%</p><p>unidades en flete de emergencia (45.4k → 9.7k)</p></div>
+    <div class="card" style="flex:1"><p class="big" style="font-size:64px">86 → 97%</p><p>demanda cubierta con flota reservada</p></div>
+    <div class="card" style="flex:1"><p class="big" style="font-size:64px">25 → 5</p><p>camiones de emergencia por semana*</p></div>
+    <div class="card" style="flex:1"><p class="big" style="font-size:64px;color:var(--negro)">13 → 0</p><p>días-CD sobre capacidad (slotting)</p></div>
+  </div>
+  <table>
+    <tr><th style="width:22%">Ámbito</th><th style="width:52%">KPI</th><th style="width:26%">Meta indicativa</th></tr>
+    <tr><td>Pronóstico</td><td>WAPE y Bias por CD × horizonte, semanal</td><td>WAPE &lt; 8%, Bias ±3%</td></tr>
+    <tr><td>Flota</td><td>% unidades en emergencia · utilización de flota reservada</td><td>−50% vs hoy · &gt; 90%</td></tr>
+    <tr><td>Curva de demanda</td><td>Días-CD sobre capacidad · pico/promedio semanal</td><td>0 días · &lt; 1.15</td></tr>
+    <tr><td>Servicio</td><td>OTIF · aceptación de la fecha recomendada</td><td>OTIF &gt; 95%</td></tr>
+    <tr><td>Operación ML</td><td>% de CD en fallback · drift · latencia p95</td><td>alarmas en CloudWatch</td></tr>
+  </table>
+  <div class="footer"><span>Backtest de 6 semanas; reserva de flota con el pronóstico D+2. *Supuesto: camión = 300 unidades. · Cristian Carcamo</span><span class="num">9 / 9</span></div>
+</section>
+
+</body>
+</html>

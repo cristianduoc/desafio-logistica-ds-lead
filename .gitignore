@@ -1,0 +1,18 @@
+# Entorno y cachés
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+
+# Material que no forma parte de la entrega
+__MACOSX/
+data_package_desafio_logistica.zip
+desafio_logistica_entrega.zip
+Desafi*cnico Data Scientist Lead.pdf
+guia_estudio/
+
+# Archivos obsoletos y duplicados
+outputs/t3_wape_fold_cd.png
+deck/figuras/*.csv

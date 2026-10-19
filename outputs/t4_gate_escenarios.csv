@@ -1,0 +1,8 @@
+centro_distribucion,dias_historia_continua,modo,motivo,escenario
+CD_CENTRO,45,MODEL,45 días >= 45,normal
+CD_ESTE,26,FALLBACK,26 días < 45,A: abrió hace 26 días
+CD_NORTE,45,MODEL,45 días >= 45,normal
+CD_NUEVO,0,FALLBACK,0 días < 45,D: CD sin historia
+CD_OESTE,4,FALLBACK,4 días < 45,C: valor corrupto 10-feb
+CD_PACIFICO,45,MODEL,45 días >= 45,normal
+CD_SUR,13,FALLBACK,13 días < 45,B: hueco de datos 1-feb

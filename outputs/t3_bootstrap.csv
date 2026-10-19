@@ -1,0 +1,5 @@
+comparación,ΔWAPE_pp,IC95_inf_pp,IC95_sup_pp,P(champion mejor)
+ML ridge log por horizonte − Base,-14.136662608298348,-15.096057338952967,-13.158859680593373,1.0
+ML ridge log por horizonte − Corrección sesgo 14d,-2.837220523410946,-3.392791188714888,-2.172489770845962,1.0
+ML ridge log por horizonte − ML ridge raw global,-1.7187209749626848,-2.61430633642551,-0.9030370722043296,1.0
+ML ridge log por horizonte − ML hgb log global,-1.5571330743934446,-2.294937619479999,-1.0155646865876957,1.0
